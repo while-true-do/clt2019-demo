@@ -4,7 +4,7 @@
 
 # clt2019-demo
 <!-- ./Header (auto generated) -->
-<!-- TODO: Short Description: One sentence to describe the repository. -->
+Repository to publish the demo "Deploy Nextcloud with Ansible" for CLT2019.
 
 ## Motivation
 
