@@ -1,0 +1,61 @@
+---
+- hosts: all
+  become: yes
+  strategy: free
+  vars:
+    pcp_services:
+      - pmlogger
+      - pmcd
+    cockpit_packages:
+      - cockpit-system
+      - cockpit-networkmanager
+      - cockpit-storaged
+      - cockpit-sosreport
+      - cockpit-pcp
+      - cockpit-selinux
+      - cockpit-kdump
+      - cockpit-packagekit
+  handlers:
+    - name: Reboot
+      reboot:
+        reboot_timeout: 3600
+  tasks:
+    - name: Set Hostname
+      hostname:
+        name: "{{ inventory_hostname }}"
+    - name: Update System
+      package:
+        name: "*"
+        state: latest
+      notify: Reboot
+    - name: Disable SeLinux for Development
+      selinux:
+        policy: targeted
+        state: permissive
+    - name: Install tuned
+      package:
+        name: tuned
+        state: present
+    - name: Enable tuned
+      service:
+        name: tuned
+        state: started
+        enabled: yes
+    - name: Install cockpit
+      package:
+        name: "{{ cockpit_packages }}"
+        state: present
+    - name: Install PCP
+      package:
+        name: pcp
+        state: present
+    - name: Enable PCP Services
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop: "{{ pcp_services }}"
+    - name: Install nfs support
+      package:
+        name: nfs-utils
+        state: present

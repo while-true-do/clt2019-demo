@@ -1,0 +1,75 @@
+---
+- hosts: nc-web
+  become: yes
+  vars:
+    nc_php_packages:
+      - php
+      - php-gd
+      - php-imagick
+      - php-intl
+      - php-json
+      - php-mbstring
+      - php-mysqlnd
+      - php-opcache
+      - php-pecl-apcu
+      - php-pecl-redis
+      - php-pecl-zip
+      - php-xml
+    nc_download: "https://download.nextcloud.com/server/releases/nextcloud-15.0.5.zip"
+  handlers:
+    - name: Restart httpd
+      service:
+        name: httpd
+        state: restarted
+  tasks:
+    - name: Install httpd
+      package:
+        name: httpd
+        state: present
+    - name: Configure httpd
+      template:
+        src: nextcloud.conf.j2
+        dest: /etc/httpd/conf.d/nextcloud.conf
+        owner: root
+        group: root
+      notify: Restart httpd
+    - name: Enable httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+    - name: Firewall for http(s)
+      firewalld:
+        service: "{{ item }}"
+        permanent: yes
+        state: enabled
+      loop:
+        - http
+        - https
+    - name: Mount data volume
+      mount:
+        path: /var/data
+        src: 192.168.122.104:/var/data/nc-web
+        state: mounted
+        fstype: nfs
+    - name: Install PHP
+      package:
+        name: "{{ nc_php_packages }}"
+        state: present
+    - name: Unpack Nextcloud
+      unarchive:
+        src: https://download.nextcloud.com/server/releases/nextcloud-15.0.5.tar.bz2
+        dest: /var/www/html
+        remote_src: yes
+    - name: Set Apache as owner
+      file:
+        path: /var/www/html
+        owner: apache
+        group: apache
+        recurse: yes
+    - name: Create Nextcloud Autoconfig
+      template:
+        src: autoconfig.php.j2
+        dest: /var/www/html/nextcloud/config/autoconfig.php
+        owner: apache
+        group: apache

@@ -1,0 +1,10 @@
+<VirtualHost *:80>
+  DocumentRoot /var/www/html/
+  ServerName  {{ ansible_fqdn }}
+
+  <Directory "/var/www/html/">
+    Require all granted
+    AllowOverride All
+    Options FollowSymLinks MultiViews
+  </Directory>
+</VirtualHost>

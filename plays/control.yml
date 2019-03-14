@@ -1,0 +1,36 @@
+---
+- hosts: control
+  become: yes
+  vars:
+    cockpit_ctrl_packages:
+      - cockpit-ws
+      - cockpit-dashboard
+      - cockpit-docker
+      - cockpit-kubernetes
+  tasks:
+    - name: Install Ansible
+      package:
+        name: ansible
+        state: present
+    - name: Install Docker
+      package:
+        name: docker
+        state: present
+    - name: Enable Docker
+      service:
+        name: docker
+        enabled: yes
+        state: started
+    - name: Install cockpit
+      package:
+        name: "{{ cockpit_ctrl_packages }}"
+    - name: Enable Cockpit WS
+      service:
+        name: cockpit.socket
+        state: started
+        enabled: yes
+    - name: Configure cockpit firewall
+      firewalld:
+        service: cockpit
+        permanent: yes
+        state: enabled
