@@ -2,19 +2,14 @@
 ansible_python_interpreter=/usr/bin/python3
 
 [control]
-ctrl01.wtd.local
+ctrl01.wtd.clt
 
 [nc:children]
 nc-web
 nc-db
-nc-data
 
 [nc-web]
-web01.wtd.local
+web01.wtd.clt
 
 [nc-db]
-db01.wtd.local
-
-[nc-data]
-data01.wtd.local
-
+db01.wtd.clt

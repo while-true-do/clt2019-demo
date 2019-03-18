@@ -1,6 +1,5 @@
 ---
 - import_playbook: plays/all.yml
 - import_playbook: plays/control.yml
-- import_playbook: plays/nc-data.yml
-- import_playbook: plays/nc-web.yml
 - import_playbook: plays/nc-db.yml
+- import_playbook: plays/nc-web.yml

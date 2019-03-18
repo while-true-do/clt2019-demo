@@ -46,12 +46,6 @@
       loop:
         - http
         - https
-    - name: Mount data volume
-      mount:
-        path: /var/data
-        src: 192.168.122.104:/var/data/nc-web
-        state: mounted
-        fstype: nfs
     - name: Install PHP
       package:
         name: "{{ nc_php_packages }}"
@@ -61,12 +55,8 @@
         src: https://download.nextcloud.com/server/releases/nextcloud-15.0.5.tar.bz2
         dest: /var/www/html
         remote_src: yes
-    - name: Set Apache as owner
-      file:
-        path: /var/www/html
         owner: apache
         group: apache
-        recurse: yes
     - name: Create Nextcloud Autoconfig
       template:
         src: autoconfig.php.j2

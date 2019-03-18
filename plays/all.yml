@@ -59,3 +59,7 @@
       package:
         name: nfs-utils
         state: present
+    - name: Adjust name resolving without dns
+      template:
+        src: hosts.j2
+        dest: /etc/hosts
